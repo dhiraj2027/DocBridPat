@@ -73,7 +73,7 @@ const MyAppointments = () => {
         try {
             
             const data = await getMyAppointments()
-            setAppointments(data)
+            setAppointments(Array.isArray(data) ? data : data.appointments || [])
 
             await refreshUser()
 
