@@ -175,7 +175,7 @@ const MyAppointments = () => {
     // Filter appointments by tab
     const now = new Date()
 
-    const upcomingAppointments = appointments.filter((a) => {
+    const upcomingAppointments = (appointments || []).filter((a) => {
         const apptDate = new Date(`${a.date}T${a.endTime}:00`)
         return (
             apptDate >= now && 
@@ -185,7 +185,7 @@ const MyAppointments = () => {
         )
     })
 
-    const pastAppointments = appointments.filter((a) => {
+    const pastAppointments = (appointments || []).filter((a) => {
         const apptDate = new Date(`${a.date}T${a.endTime}:00`)
         return (
             apptDate < now || 
