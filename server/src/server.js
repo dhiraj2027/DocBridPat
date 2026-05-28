@@ -33,10 +33,16 @@ const app = express();
 // Create HTTP server from Express app
 const httpServer = createServer(app)
 
+// Allow both local and production
+const allowedOrigins = [
+    'http://localhost:5173',
+    process.env.CLIENT_URL
+].filter(Boolean)
+
 // Socket.io setup
 const io = new Server(httpServer, {
     cors: {
-        origin: 'http://localhost:5173',
+        origin: allowedOrigins,
         methods: ['GET', 'POST']
     }
 })
@@ -103,7 +109,7 @@ io.on('connection', (socket) => {
 })
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: allowedOrigins,
     credentials: true
 }));
 
