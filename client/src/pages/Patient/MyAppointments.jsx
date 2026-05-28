@@ -73,7 +73,7 @@ const MyAppointments = () => {
         try {
             
             const data = await getMyAppointments()
-            setAppointments(data.appointments)
+            setAppointments(data)
 
             await refreshUser()
 
