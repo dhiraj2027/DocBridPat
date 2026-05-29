@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { useParams, useNavigate } from 'react-router-dom'
+import useAuth from "../../hooks/useAuth.js"
 import { io } from 'socket.io-client'
 import { getVideoRoom } from '../../services/videoService.js'
 import Button from '../../components/ui/Button.jsx'
@@ -17,6 +18,7 @@ const ICE_SERVERS = {
 
 
 const VideoCall = () => {
+    const { user } = useAuth()
     const { appointmentId } = useParams()
     const navigate = useNavigate()
 
@@ -285,7 +287,12 @@ const VideoCall = () => {
 
     // Leave and navigate back
     const handleLeave = () => {
-        navigate('/doctor/appointments', { replace: true })
+        if(user?.role === 'doctor') {
+            navigate('/doctor/appointments', { replace: true })
+        }
+        else {
+            navigate('/appointments', { replace: true })
+        }
     }
 
     // Loading screen
