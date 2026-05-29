@@ -1,29 +1,8 @@
-import nodemailer from 'nodemailer'
+import { Resend } from 'resend'
 
-// Create transporter
-const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: Number(process.env.EMAIL_PORT),
-    secure: false,
-    requireTLS: true,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    },
+const resend = new Resend(process.env.RESEND_API_KEY)
 
-    connectionTimeout: 60000,
-    greetingTimeout: 60000,
-    socketTimeout: 60000
-})
 
-transporter.verify((error, success) => {
-    if(error) {
-        console.error("SMTP Verify Error: ", error)
-    }
-    else if(success) {
-        console.log("SMTP Server Ready")
-    }
-})
 
 // Base HTML email template
 const baseTemplate = (content) => `
@@ -167,11 +146,11 @@ const baseTemplate = (content) => `
 
 
 // Send email helper
-const sendEmail = async ({ to, subject, html }) => {
+export const sendEmail = async ({ to, subject, html }) => {
     try {
-        
-        await transporter.sendMail({
-            from: process.env.EMAIL_FROM,
+       
+        const data = await resend.emails.send({
+            from: "DocBridPat <onboarding@resend.dev>",
             to,
             subject,
             html
