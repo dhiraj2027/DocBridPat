@@ -54,7 +54,7 @@ const DoctorDashboard = () => {
     const now = new Date()
     const upcoming = appointments
         .filter((a) => {
-            const dt = new Date(`${a.date}T${a.startTime}:00`)
+            const dt = new Date(`${a.date}T${a.startTime}:00+05:30`)
             return dt >= now && a.status !== 'cancelled'
         })
         .sort((a, b) => {

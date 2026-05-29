@@ -176,7 +176,7 @@ const MyAppointments = () => {
     const now = new Date()
 
     const upcomingAppointments = (appointments || []).filter((a) => {
-        const apptDate = new Date(`${a.date}T${a.endTime}:00`)
+        const apptDate = new Date(`${a.date}T${a.endTime}:00+05:30`)
         return (
             apptDate >= now && 
             a.status !== 'cancelled' && 
@@ -186,7 +186,7 @@ const MyAppointments = () => {
     })
 
     const pastAppointments = (appointments || []).filter((a) => {
-        const apptDate = new Date(`${a.date}T${a.endTime}:00`)
+        const apptDate = new Date(`${a.date}T${a.endTime}:00+05:30`)
         return (
             apptDate < now || 
             a.status === 'cancelled' || 
@@ -372,7 +372,7 @@ const MyAppointments = () => {
                     {(() => {
                         if(!selectedAppointment) return
 
-                        const apptStart = new Date(`${selectedAppointment.date}T${selectedAppointment.startTime}:00`)
+                        const apptStart = new Date(`${selectedAppointment.date}T${selectedAppointment.startTime}:00+05:30`)
                         const hoursUntil = (apptStart.getTime() - new Date().getTime()) / (1000 * 60 * 60)
 
                         return hoursUntil >= 24 ? (
@@ -522,8 +522,8 @@ const MyAppointments = () => {
 // Appointment Card sub-component
 const AppointmentCard = ({ appointment, onCancel, onJoinCall }) => {
     const now = new Date()
-    const apptDateTime = new Date(`${appointment.date}T${appointment.startTime}:00`)
-    const appointmentEnd = new Date(`${appointment.date}T${appointment.endTime}:00`)
+    const apptDateTime = new Date(`${appointment.date}T${appointment.startTime}:00+05:30`)
+    const appointmentEnd = new Date(`${appointment.date}T${appointment.endTime}:00+05:30`)
 
     // allow joining 10 min before start time
     const tenMinBefore = new Date(apptDateTime.getTime() - 10 * 60 * 1000)

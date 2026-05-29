@@ -131,7 +131,7 @@ const DoctorAppointments = () => {
     const now = new Date()
 
     const upcomingList = appointments.filter((a) => {
-        const dt = new Date(`${a.date}T${a.endTime}:00`)
+        const dt = new Date(`${a.date}T${a.endTime}:00+05:30`)
         return (
             dt >= now && 
             a.status !== 'cancelled' && 
@@ -141,7 +141,7 @@ const DoctorAppointments = () => {
     })
 
     const pastList = appointments.filter((a) => {
-        const dt = new Date(`${a.date}T${a.endTime}:00`)
+        const dt = new Date(`${a.date}T${a.endTime}:00+05:30`)
         return (
             dt < now || 
             a.status === 'cancelled' || 
@@ -246,8 +246,8 @@ const DoctorAppointments = () => {
             {!error && displayList.length>0 && (
                 <div className="flex flex-col gap-4">
                     {displayList.map((appt) => {
-                        const apptDateTime = new Date(`${appt.date}T${appt.startTime}:00`)
-                        const appointmentEnd = new Date(`${appt.date}T${appt.endTime}:00`)
+                        const apptDateTime = new Date(`${appt.date}T${appt.startTime}:00+05:30`)
+                        const appointmentEnd = new Date(`${appt.date}T${appt.endTime}:00+05:30`)
 
                         const tenMinBefore = new Date(apptDateTime.getTime() - 10 * 60 * 1000)
 

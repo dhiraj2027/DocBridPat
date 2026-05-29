@@ -61,7 +61,7 @@ export const bookAppointment = async (req, res, next) => {
         }
         
         const now = new Date()
-        const slotDateTime = new Date(`${slot.date}T${slot.startTime}:00`)
+        const slotDateTime = new Date(`${slot.date}T${slot.startTime}:00+05:30`)
         
         if(slotDateTime < now) {
             return res.status(400).json({
@@ -227,7 +227,7 @@ export const cancelAppointment = async (req, res, next) => {
         
         // Block cancellation if appointment has already started
         const now = new Date()
-        const appointmentStart = new Date(`${appointment.date}T${appointment.startTime}:00`)
+        const appointmentStart = new Date(`${appointment.date}T${appointment.startTime}:00+05:30`)
         
         if(now >= appointmentStart) {
             return res.status(400).json({
@@ -331,7 +331,7 @@ export const completeAppointment = async (req, res, next) => {
 
         // Cannot complete before the appointment end time
         const now = new Date()
-        const appointmentEnd = new Date(`${appointment.date}T${appointment.endTime}:00`)
+        const appointmentEnd = new Date(`${appointment.date}T${appointment.endTime}:00+05:30`)
         
         if(now < appointmentEnd) {
             const minutesRemaining = Math.ceil((appointmentEnd.getTime() - now.getTime()) / (1000 * 60))
@@ -451,7 +451,7 @@ export const markMissedAppointment = async (req, res, next) => {
 
         // Can only mark missed after end time
         const now = new Date()
-        const appointmentEnd = new Date(`${appointment.date}T${appointment.endTime}:00`)
+        const appointmentEnd = new Date(`${appointment.date}T${appointment.endTime}:00+05:30`)
 
         if(now < appointmentEnd) {
             const minutesRemaining = Math.ceil((appointmentEnd.getTime() - now.getTime()) / (1000 * 60))
