@@ -128,7 +128,7 @@ export const bookAppointment = async (req, res, next) => {
             
             res.status(201).json({
                 message: 'Appointment booked successfully',
-                appointment: appointment[0]
+                appointment
             })
             
         } catch (innerError) {
