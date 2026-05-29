@@ -1,7 +1,11 @@
-import { Resend } from 'resend'
+import Brevo from '@getbrevo/brevo'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const apiInstance = new Brevo.TransactionalEmailsApi()
 
+apiInstance.setApiKey(
+    Brevo.TransactionalEmailsApiApiKeys.apiKey,
+    process.env.BREVO_API_KEY
+)
 
 
 // Base HTML email template
@@ -146,20 +150,35 @@ const baseTemplate = (content) => `
 
 
 // Send email helper
-export const sendEmail = async ({ to, subject, html }) => {
+const sendEmail = async ({ to, subject, html }) => {
     try {
        
-        const data = await resend.emails.send({
-            from: "DocBridPat <onboarding@resend.dev>",
-            to,
-            subject,
-            html
-        })
-        console.log(`Email sent to ${to}: ${subject}`);
+        const sendSmtpEmail = new Brevo.SendSmtpEmail()
+
+        sendSmtpEmail.subject = subject
+
+        sendSmtpEmail.htmlContent = html
+
+        sendSmtpEmail.sender = {
+            name: 'DocBridPat',
+            email: process.env.EMAIL_FROM
+        }
+
+        sendSmtpEmail.to = [
+            {
+                email: to
+            }
+        ]
+
+        const result = await apiInstance.sendTransacEmail(
+            sendSmtpEmail
+        )
+
+        console.log('Email sent: ', result.body?.messageId)
         
     } catch (error) {
         // Log but don't crash the app if email fails
-        console.error('Email send error:', error.message);   
+        console.error('Email send error: ', error.response?.body || error)  
     }
 }
 
