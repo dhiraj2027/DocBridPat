@@ -399,9 +399,10 @@ export const confirmAppointment = async (req, res, next) => {
         await appointment.save()
 
         const patientUser = await User.findById(appointment.patient)
+        const doctorProf = DoctorProfile.findById(appointment.doctor).populate('user')
 
         if(patientUser) {
-            sendAppointmentConfirmedEmail(patientUser, doctorProfile, appointment)
+            sendAppointmentConfirmedEmail(patientUser, doctorProf, appointment)
         }
         
         res.json({
