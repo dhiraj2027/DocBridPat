@@ -1,12 +1,4 @@
-import Brevo from '@getbrevo/brevo'
-
-const apiInstance = new Brevo.TransactionalEmailsApi()
-
-apiInstance.setApiKey(
-    Brevo.TransactionalEmailsApiApiKeys.apiKey,
-    process.env.BREVO_API_KEY
-)
-
+import axios from 'axios'
 
 // Base HTML email template
 const baseTemplate = (content) => `
@@ -152,33 +144,35 @@ const baseTemplate = (content) => `
 // Send email helper
 const sendEmail = async ({ to, subject, html }) => {
     try {
-       
-        const sendSmtpEmail = new Brevo.SendSmtpEmail()
-
-        sendSmtpEmail.subject = subject
-
-        sendSmtpEmail.htmlContent = html
-
-        sendSmtpEmail.sender = {
-            name: 'DocBridPat',
-            email: process.env.EMAIL_FROM
-        }
-
-        sendSmtpEmail.to = [
+        
+        const response = await axios.post(
+            'https://api.brevo.com/v3/smtp/email',
             {
-                email: to
+                sender: {
+                    name: 'DocBridPat',
+                    email: process.env.EMAIL_FROM
+                },
+                to: [
+                    {
+                        email: to
+                    }
+                ],
+                subject,
+                htmlContent: html
+            },
+            {
+                headers: {
+                    'api-key': process.env.BREVO_API_KEY,
+                    'Content-Type': 'application/json'
+                }
             }
-        ]
-
-        const result = await apiInstance.sendTransacEmail(
-            sendSmtpEmail
         )
 
-        console.log('Email sent: ', result.body?.messageId)
+        console.log('Email sent: ', response.data)
         
     } catch (error) {
         // Log but don't crash the app if email fails
-        console.error('Email send error: ', error.response?.body || error)  
+        console.error('Email send error: ', error.response?.data || error.message)  
     }
 }
 
