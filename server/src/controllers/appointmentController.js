@@ -367,7 +367,7 @@ export const confirmAppointment = async (req, res, next) => {
         const userId = req.user.id
         const { id } = req.params
         
-        const doctorProfile = await DoctorProfile.findOne({ user: userId })
+        const doctorProfile = await DoctorProfile.findOne({ user: userId }).populate('user')
         
         if(!doctorProfile) {
             return res.status(404).json({
@@ -399,10 +399,9 @@ export const confirmAppointment = async (req, res, next) => {
         await appointment.save()
 
         const patientUser = await User.findById(appointment.patient)
-        const doctorProf = DoctorProfile.findById(appointment.doctor).populate('user')
 
         if(patientUser) {
-            sendAppointmentConfirmedEmail(patientUser, doctorProf, appointment)
+            sendAppointmentConfirmedEmail(patientUser, doctorProfile, appointment)
         }
         
         res.json({
