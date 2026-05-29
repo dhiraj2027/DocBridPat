@@ -1,18 +1,28 @@
 import nodemailer from 'nodemailer'
+import dns from 'dns'
 
+dns.setDefaultResultOrder('ipv4first')
 
 // Create transporter
 const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: Number(process.env.EMAIL_PORT),
     secure: false,
-    family: 4,
+    requireTLS: true,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
     }
 })
 
+transporter.verify((error, success) => {
+    if(error) {
+        console.error("SMTP Verify Error: ", error)
+    }
+    else {
+        console.log("SMTP Server Ready")
+    }
+})
 
 // Base HTML email template
 const baseTemplate = (content) => `
