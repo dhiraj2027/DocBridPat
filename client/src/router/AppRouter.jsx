@@ -104,13 +104,17 @@ const GuestRoute = ({ children }) => {
 
 // OTP route
 const OTPRoute = ({ children }) => {
-    const { pendingUserId, isAuthenticated, isLoading } = useAuth()
+    const { pendingUserId, isAuthenticated, isLoading, user } = useAuth()
 
     if(isLoading) return <LoadingSpinner />
 
     // Already logged in - no need for OTP
     if(isAuthenticated) {
-        return <Navigate to="/" replace />
+        if(user?.role === 'admin') return <Navigate to="/admin" replace />
+        if(user?.role === 'doctor') {
+            return <Navigate to={user?.isOnboarded ? '/doctor/dashboard' : '/onboarding' } replace />
+        }
+        return <Navigate to="/doctors" replace />
     }
 
     // No pending user - redirect to register
