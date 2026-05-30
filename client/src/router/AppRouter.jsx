@@ -136,7 +136,14 @@ const AppContent = () => {
             <main className='flex-1'>
                 <Routes>
                     {/* Public */}
-                    <Route path="/" element={<Home />} />
+                    <Route 
+                        path="/" 
+                        element={
+                            <GuestRoute>
+                                <Home />
+                            </GuestRoute>
+                        } 
+                    />
 
                     {/* Guest only (redirect if logged in) */}
                     <Route
