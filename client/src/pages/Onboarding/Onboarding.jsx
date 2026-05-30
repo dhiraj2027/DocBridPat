@@ -23,7 +23,7 @@ const SPECIALIZATIONS = [
 ]
 
 const Onboarding = () => {
-    const { updateUser } = useAuth()
+    const { refreshUser } = useAuth()
     const navigate = useNavigate()
 
     const [isCheckingProfile, setIsCheckingProfile] = useState(true)
@@ -148,7 +148,7 @@ const Onboarding = () => {
                 clinicAddress: formData.clinicAddress
             })
 
-            updateUser({ isOnboarded: true })
+            await refreshUser()
             setSubmitted(true)
 
         } catch (error) {

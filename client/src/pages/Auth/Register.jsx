@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Link, useNavigate } from 'react-router-dom'
 import useAuth from "../../hooks/useAuth.js"
+import { getPasswordStrength, validatePassword } from "../../utils/passwordStrength.js"
 import Input from "../../components/ui/Input.jsx"
 import Button from "../../components/ui/Button.jsx"
 
@@ -69,8 +70,11 @@ const Register = () => {
         if(!formData.password) {
             newErrors.password = 'Password is required'
         }
-        else if(formData.password.length < 6) {
-            newErrors.password = 'Password must be at least 6 characters'
+        else {
+            const pwdErrors = validatePassword(formData.password)
+            if(pwdErrors.length > 0) {
+                newErrors.password = `Password must contain: ${pwdErrors.join(', ')}`
+            }
         }
 
         if(!formData.confirmPassword) {
@@ -83,12 +87,6 @@ const Register = () => {
         return newErrors
     }
 
-
-    // Role-based redirect
-    const redirectByRole = (role) => {
-        if(role === 'doctor') return navigate('/onboarding', {replace: true })
-        return navigate('/doctors', {replace: true })
-    }
 
     // Submit
     const handleSubmit = async (e) => {
@@ -216,16 +214,71 @@ const Register = () => {
                             required
                         />
 
-                        <Input 
-                            label='Password'
-                            name='password'
-                            type='password'
-                            placeholder='Minimum 6 characters'
-                            value={formData.password}
-                            onChange={handleChange}
-                            error={errors.password}
-                            required
-                        />
+                        {/* Password field + strength meter */}
+                        <div className="flex flex-col gap-1">
+                            <Input 
+                                label='Password'
+                                name='password'
+                                type='password'
+                                placeholder='Min 8 characters'
+                                value={formData.password}
+                                onChange={handleChange}
+                                error={errors.password}
+                                required
+                            />
+
+                            {/* Strength bar - only show when typing */}
+                            {formData.password && (() => {
+                                const strength = getPasswordStrength(formData.password)
+                                const blocks = [1, 2, 3, 4, 5, 6]
+
+                                return (
+                                    <div className="mt-1">
+                                        {/* Bar */}
+                                        <div className="flex gap-1 mb-1">
+                                            {blocks.map((b) => (
+                                                <div
+                                                    key={b}
+                                                    className={`h-1.5 flex-1 rounded-full transition-all duration-300
+                                                        ${b <= strength.score
+                                                            ? strength.color 
+                                                            : 'bg-gray-200'
+
+                                                        }`}
+                                                />
+                                            ))}  
+                                        </div>
+
+                                        {/* Label */}
+                                        <div className="flex justify-between items-center">
+                                            <div className="flex flex-col gap-0.5">
+                                                {validatePassword(formData.password).map((req, i) => (
+                                                    <p
+                                                        key={i}
+                                                        className="text-xs text-red-400"
+                                                    >
+                                                        ✗ {req}
+                                                    </p>
+                                                ))}
+                                            </div>
+
+                                            {strength.label && (
+                                                <span className={`
+                                                    text-xs font-semibold 
+                                                    ${strength.label === 'Weak' ? 'text-red-500' : 
+                                                        strength.label === 'Fair' ? 'text-yellow-500' : 
+                                                        strength.label === 'Good' ? 'text-blue-500' : 
+                                                        'text-green-500'
+                                                    }
+                                                `}>
+                                                    {strength.label}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                )
+                            })()}
+                        </div>
 
                         <Input 
                             label='Confirm password'

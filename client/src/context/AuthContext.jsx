@@ -34,6 +34,28 @@ export const AuthProvider = ({ children }) => {
     }, [])
 
 
+    const refreshUser = useCallback(async () => {
+        try {
+            
+            const response = await apiClient.get('/auth/me')
+            const updatedUser = response.data
+            setUser(updatedUser)
+            localStorage.setItem('user', JSON.stringify(updatedUser))
+
+        } catch (error) {
+            console.error('Failed to refresh user: ', error)
+        }
+    }, [])
+
+
+    // sync user from database after rehydration
+    useEffect(() => {
+        if(token) {
+            refreshUser()
+        }
+    }, [token])
+
+
     const saveSession = useCallback((tokenValue, userData) => {
         localStorage.setItem('token', tokenValue)
         localStorage.setItem('user', JSON.stringify(userData))
@@ -122,18 +144,7 @@ export const AuthProvider = ({ children }) => {
     }, [])
 
 
-    const refreshUser = useCallback(async () => {
-        try {
-            
-            const response = await apiClient.get('/auth/me')
-            const updatedUser = response.data
-            setUser(updatedUser)
-            localStorage.setItem('user', JSON.stringify(updatedUser))
-
-        } catch (error) {
-            console.error('Failed to refresh user: ', error)
-        }
-    }, [])
+    
 
 
     const value = {

@@ -30,7 +30,6 @@ export const applyAsDoctor = async (req, res, next) => {
 
         if(user.role !== 'doctor') {
             user.role = 'doctor'
-            await user.save()
         }
 
         const existingProfile = await DoctorProfile.findOne({ user: userId })
@@ -44,7 +43,12 @@ export const applyAsDoctor = async (req, res, next) => {
             existingProfile.clinicAddress = clinicAddress ?? existingProfile.clinicAddress
             existingProfile.isApproved = false
             
+            existingProfile.isApproved = false
             await existingProfile.save()
+            
+            user.isOnboarded = true
+            await user.save()
+
             
             return res.json({
                 message: 'Doctor profile updated and pending approval',
@@ -61,6 +65,9 @@ export const applyAsDoctor = async (req, res, next) => {
             clinicName,
             clinicAddress
         })
+
+        user.isOnboarded = true
+        await user.save()
 
         res.status(201).json({
             message: 'Doctor application submitted and pending approval',

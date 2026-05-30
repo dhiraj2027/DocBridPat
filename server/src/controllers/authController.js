@@ -7,6 +7,16 @@ import { sendWelcomeEmail, sendOTPEmail, sendResendOTPEmail } from '../utils/ema
 
 const SALT_ROUNDS = 10
 
+const isStrongPassword = (password) => {
+    return (
+        password.length >= 8 && 
+        /[A-Z]/.test(password) && 
+        /[a-z]/.test(password) && 
+        /[0-9]/.test(password) && 
+        /[^A-Za-z0-9]/.test(password)
+    )
+}
+
 export const register = async (req, res, next) => {
     try {
         
@@ -15,6 +25,12 @@ export const register = async (req, res, next) => {
         if(!name  || !email || !password) {
             return res.status(400).json({
                 message: 'Name, email and password are required'
+            })
+        }
+
+        if(!isStrongPassword) {
+            return res.status(400).json({
+                message: 'Password must be at least 8 characters and contain uppercase, lowercase, number and special character.'
             })
         }
 
